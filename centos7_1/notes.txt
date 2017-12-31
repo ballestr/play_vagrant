@@ -1,0 +1,42 @@
+Vagrant and KVM
+https://gist.github.com/kmassada/f3d635fb1d4b8219778d
+
+
+ELK on Centos7
+https://www.linuxtechi.com/install-elk-stack-elasticsearch-logstash-kibana-centos7-rhel7/
+https://www.digitalocean.com/community/tutorials/how-to-install-elasticsearch-logstash-and-kibana-elk-stack-on-centos-7
+
+Configuring without any security, for testing
+
+
+vagrant rsync
+
+yum install java-1.8.0-openjdk
+
+cp /vagrant/elk.repo /etc/yum.repos.d/
+yum install -y elasticsearch logstash kibana filebeat
+systemctl daemon-reload
+
+## Setup ELK
+rsync -ai /vagrant/logstash.conf /etc/logstash/conf.d/
+service logstash configtest
+
+systemctl start elasticsearch
+systemctl start logstash
+systemctl start kibana
+
+## Test
+curl -X GET http://localhost:9200
+curl -X GET http://localhost:5601
+
+## Setup local log sender
+rsync -ai /vagrant/filebeat.yml /etc/filebeat/filebeat.yml 
+systemctl start filebeat
+
+## Test
+curl -XGET 'http://localhost:9200/filebeat-*/_search?pretty'
+
+
+IP=$(ip -4 -o addr show dev eth0 | awk '{print $4}' | sed 's|/.*||')
+echo "http://$IP:5601/"
+
