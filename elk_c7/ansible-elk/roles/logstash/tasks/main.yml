@@ -1,0 +1,14 @@
+- name: LogStash
+  tags: elk,logstash
+  block:
+  - yum: pkg={{item}} state=present
+    with_items:
+    #- java-1.8.0-openjdk
+    - logstash
+  - copy:
+      dest: /etc/logstash/conf.d/logstash.conf
+      src:  logstash.conf
+      owner: root
+      group: root
+      backup: yes
+  - service: name=logstash state=started

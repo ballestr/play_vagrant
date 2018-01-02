@@ -1,0 +1,14 @@
+- name: FileBeat
+  tags: filebeat
+  block:
+  - yum: pkg={{item}} state=present
+    with_items:
+    #- java-1.8.0-openjdk
+    - filebeat
+  - copy:
+      dest: /etc/filebeat/filebeat.yml
+      src:  filebeat.yml
+      owner: root
+      group: root
+      backup: yes
+  - service: name=filebeat state=started

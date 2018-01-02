@@ -1,0 +1,27 @@
+[elasticsearch]
+name=Elasticsearch repository
+baseurl=http://packages.elastic.co/elasticsearch/2.x/centos
+gpgcheck=1
+gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+
+[kibana-4.5]
+name=Kibana repository for 4.5.x packages
+baseurl=http://packages.elastic.co/kibana/4.5/centos
+gpgcheck=1
+gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+
+[logstash]
+name=Logstash
+baseurl=http://packages.elasticsearch.org/logstash/2.2/centos
+gpgcheck=1
+gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+enabled=1
+
+[beats]
+name=Elastic Beats Repository
+baseurl=https://packages.elastic.co/beats/yum/el/$basearch
+enabled=1
+gpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch
+gpgcheck=1
