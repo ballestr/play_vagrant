@@ -14,8 +14,30 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "centos/7"
 
-  config.vm.define "machine1"
-  config.vm.define "machine2"
+  ## need to set hostname for Ansible ? surely for Puppet.
+  ## defining bootstrap here and overriding with preserve_order
+  ## seems the only way to get this to run before ansible :-/ 
+  ## sash, Jan 2018
+  config.vm.provision "bootstrap", type: "shell" do |s|
+    s.inline = "echo bootstrap dummy $(hostname)"
+  end
+
+  config.vm.define "machine1" do |m|
+    hostname="machine1"
+    ip="10.0.3.12"
+    m.vm.network "private_network", ip: "#{ip}",
+    virtualbox__intnet: "NatNetwork3"
+    m.vm.provision "bootstrap", type: "shell", preserve_order: true,
+      inline: "hostnamectl set-hostname #{hostname}; echo bootstrap done $(hostname)"
+  end
+  config.vm.define "machine2" do |m|
+    hostname="machine2"
+    ip="10.0.3.12"
+    m.vm.network "private_network", ip:"#{ip}" ,
+    virtualbox__intnet: "NatNetwork3"
+    m.vm.provision "bootstrap", type: "shell", preserve_order: true,
+      inline: "hostnamectl set-hostname #{hostname}; echo bootstrap done $(hostname)"
+  end
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -52,13 +74,17 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
+  config.vm.provider "virtualbox" do |vb|
   #   # Display the VirtualBox GUI when booting the machine
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
   #   vb.memory = "1024"
-  # end
+    ##
+    ## https://www.vagrantup.com/docs/virtualbox/configuration.html
+    vb.linked_clone = true
+    #vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+  end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -70,6 +96,7 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
+
 
   # Run Ansible from the Vagrant VM
   # https://www.vagrantup.com/docs/provisioning/ansible.html
