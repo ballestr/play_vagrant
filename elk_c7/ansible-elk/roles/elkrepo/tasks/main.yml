@@ -4,4 +4,4 @@
     owner: root
     group: root
     backup: yes
-  tags: yumrepo
+  tags: yumrepo,elk
