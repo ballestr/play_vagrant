@@ -25,18 +25,26 @@ systemctl start elasticsearch
 systemctl start logstash
 systemctl start kibana
 
-## Test
+## Test Elastic
 curl -X GET http://localhost:9200
+## Test Elastic cluster
+curl -X GET http://10.0.3.22:9200/_cluster/health?pretty
+
+## Test Kibana
 curl -X GET http://localhost:5601
 
 ## Setup local log sender
 rsync -ai /vagrant/filebeat.yml /etc/filebeat/filebeat.yml 
 systemctl start filebeat
 
-## Test
+## Test that Elastic gets the filebeat 
 curl -XGET 'http://localhost:9200/filebeat-*/_search?pretty'
 
 
 IP=$(ip -4 -o addr show dev eth0 | awk '{print $4}' | sed 's|/.*||')
 echo "http://$IP:5601/"
+
+## setup to have standalone ansible run
+## create ansible.cfg referring to vagrant auto inventory
+## ansible-playbook ansible-elk/elk-playbook.yml 
 
