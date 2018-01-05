@@ -1,0 +1,6 @@
+# notes for virtualbox addons
+yum install epel-release
+yum install dkms
+
+# Mount Guest Additions
+# Machine has no optical drive
