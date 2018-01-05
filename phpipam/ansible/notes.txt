@@ -1,0 +1,2 @@
+## setup for http://localhost:8001/phpipam/
+# new phpipam installation

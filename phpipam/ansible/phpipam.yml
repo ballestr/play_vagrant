@@ -1,0 +1,60 @@
+## https://phpipam.net/news/phpipam-installation-on-centos-7/
+## recipe setting of apache.apache on /var/www/html is insecure, avoid.
+
+## setup for http://localhost:8001/phpipam/
+
+---
+- hosts: all
+  vars:
+    webpath: "/var/www/html/phpipam"
+  tasks:
+#    - name: ensure ntpd is at the latest version
+#      yum: pkg=ntp state=latest
+#      notify:
+#      - restart ntpd
+#  handlers:
+#    - name: restart ntpd
+#      service: name=ntpd state=restarted
+
+
+    ## test Vagrant VM, ok to disable SELinux
+    - selinux:
+        policy: targeted
+        state: permissive  
+    - yum: pkg={{item}} state=present
+      with_items:
+        - php
+        - php-gd
+        - php-ldap
+        - php-pdo
+        - php-pear
+        - php-snmp
+        - php-xml
+        - php-mysql
+        - php-mbstring
+        - git
+        - httpd
+        - mariadb-server
+    ## Checkout the source, version 1.3
+    - git:
+        dest: "{{webpath}}"
+        repo: https://github.com/phpipam/phpipam.git
+        #depth: 1 # on Centos7 [WARNING]: Your git version is too old to fully support the depth argument.
+        update: yes
+        refspec: 1.3
+    ## setup permissions in web area
+    - file: 
+        path: "{{webpath}}/{{item}}"
+        recurse: yes
+        owner: apache
+        group: apache
+        setype: httpd_sys_rw_content_t
+      with_items:
+          - "app/admin/import-export/upload/"
+          - "app/subnets/import-subnet/upload/"
+          - "css/1.3.1/images/logo/"
+    #- line "date.timezone = Europe/Ljubljana"
+    ## Start services
+    - service: name=mariadb state=started enabled=true
+    - service: name=httpd   state=started enabled=true
+
