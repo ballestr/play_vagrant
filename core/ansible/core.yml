@@ -1,0 +1,61 @@
+## https://phpipam.net/news/phpipam-installation-on-centos-7/
+## recipe setting of apache.apache on /var/www/html is insecure, avoid.
+
+## setup for http://localhost:8001/phpipam/
+
+---
+- hosts: all
+  vars:
+    webpath: "/var/www/html/phpipam"
+  tasks:
+#    - name: ensure ntpd is at the latest version
+#      yum: pkg=ntp state=latest
+#      notify:
+#      - restart ntpd
+#  handlers:
+#    - name: restart ntpd
+#      service: name=ntpd state=restarted
+
+
+    ## test Vagrant VM, ok to disable SELinux
+#    - selinux:
+#        policy: targeted
+#        state: permissive
+    ## need separate task for installing repo files
+#    - yum: pkg={{item}} state=present
+#      with_items:
+#        - epel-release
+    ## and now the rest
+   - yum: pkg={{item}} state=present
+     with_items:
+       - git
+       - mc
+       - net-tools ## netstat etc
+       - tcpdump
+       - nmap
+       - httpd
+       - ganglia-gmond
+       - ganglia-gmetad
+       - ganglia-web
+    ## ansible has pretty odd error messages if get the indent wrong
+    ##  [WARNING]: Ignoring invalid attribute: dest
+    ## also if the with_items is indented in:
+    ## 'item' is undefined
+    - copy:
+        dest: "/etc/httpd/conf.d/ganglia.conf"
+        src: "ganglia.conf"
+        owner: root
+        group: root
+        # notify httpd
+    - copy:
+        dest: "/etc/ganglia/{{item}}"
+        src: "{{item}}"
+      with_items:
+        - ganglia.conf
+        - gmond.conf
+
+
+    - service: name=httpd   state=started enabled=true
+    - service: name=gmond   state=started enabled=true
+    - service: name=gmetad  state=started enabled=true
+
