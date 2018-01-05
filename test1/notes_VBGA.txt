@@ -9,4 +9,6 @@ yum install dkms
 ## try vagrant plugin suggested by Sam
 ## https://github.com/dotless-de/vagrant-vbguest
 vagrant plugin install vagrant-vbguest
-## installs lots of stuff under ~/.vagrant, 
+
+installs lots of stuff under ~/.vagrant, 
+leaves devel packages on the VM, not clean
