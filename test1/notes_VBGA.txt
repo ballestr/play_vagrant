@@ -4,3 +4,9 @@ yum install dkms
 
 # Mount Guest Additions
 # Machine has no optical drive
+
+
+## try vagrant plugin suggested by Sam
+## https://github.com/dotless-de/vagrant-vbguest
+vagrant plugin install vagrant-vbguest
+## installs lots of stuff under ~/.vagrant, 

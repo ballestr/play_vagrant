@@ -1,1 +1,4 @@
-notes
+notes for Ganglia install
+
+yum install epel-release
+yum install ganglia-gmond 
