@@ -1,13 +1,19 @@
 ---
 - hosts: all
   tasks:
-    - name: ensure ntpd is at the latest version
-      yum: pkg=ntp state=latest
-      notify:
-      - restart ntpd
-  handlers:
-    - name: restart ntpd
-      service: name=ntpd state=restarted
+    ## need separate task for installing repo files
+    - yum: pkg={{item}} state=present
+      with_items:
+        - epel-release
+    ## and now the rest
+    - yum: pkg={{item}} state=present
+      with_items:
+        - ganglia-gmond
+    - copy:
+        dest: "/etc/ganglia/{{item}}"
+        src: "{{item}}"
+      with_items:
+        - gmond.conf
   roles:
     - base
     - elkrepo
