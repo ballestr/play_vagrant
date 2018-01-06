@@ -6,9 +6,10 @@
     #- java-1.8.0-openjdk
     - kibana
 #  - copy:
-#      dest: /etc/elasticsearch/elasticsearch.yml
-#      src:  elasticsearch.yml
+#      dest: /etc/kibana/kibana.yml
+#      src:  kibana.yml
 #      owner: root
 #      group: root
 #      backup: yes
+  ## do not set to autostart, for flexible testing
   - service: name=kibana state=started

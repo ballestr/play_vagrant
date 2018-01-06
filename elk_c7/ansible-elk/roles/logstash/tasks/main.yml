@@ -11,4 +11,5 @@
       owner: root
       group: root
       backup: yes
+  ## do not set to autostart, for flexible testing
   - service: name=logstash state=started

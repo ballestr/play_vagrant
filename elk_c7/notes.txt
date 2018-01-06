@@ -48,3 +48,8 @@ echo "http://$IP:5601/"
 ## create ansible.cfg referring to vagrant auto inventory
 ## ansible-playbook ansible-elk/elk-playbook.yml 
 
+## Load testing 
+while true; do logger -t elktest "testing_${RANDOM}"; sleep 1; sleep $[RANDOM%5]; done
+
+
+

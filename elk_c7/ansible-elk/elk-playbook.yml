@@ -14,6 +14,7 @@
         src: "{{item}}"
       with_items:
         - gmond.conf
+    - service: name=gmond   state=started enabled=true
   roles:
     - base
     - elkrepo
@@ -27,11 +28,11 @@
     #- elkrepo
     - elastic
     - logstash
-    - kibana
+    #- kibana
 
 - hosts: elk2
   roles:
     #- elkrepo
     - elastic
     #- logstash
-    #- kibana
+    - kibana

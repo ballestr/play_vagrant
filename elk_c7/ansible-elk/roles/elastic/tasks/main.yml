@@ -12,6 +12,7 @@
       group: elasticsearch
       backup: yes
       #notify: restart elasticsearch
+  ## do not set to autostart, for testing
   - service: name=elasticsearch state=started
 
 ## Perfect demonstration of why Ansible is just a glorified shellscript:
