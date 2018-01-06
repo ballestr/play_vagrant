@@ -23,10 +23,12 @@
         #- nmap
         - iotop
         - psmisc ## pstree etc
+        #- htop ## needs epel
 
 ############################################
 ### GitLab setup 
 ###
+    ## required packages according to https://about.gitlab.com/installation/#centos-7
     - yum: pkg={{item}} state=present
       with_items:
         - openssh-server
@@ -81,9 +83,13 @@
       notify: gitlab_restart
       when: gitlab_create_self_signed_cert
 
+    # Start and configure GitLab. Sometimes the first run fails, but after that,
+    # restarts fix problems, so ignore failures on this run.
+    ## so says https://github.com/geerlingguy/ansible-role-gitlab/blob/master/tasks/main.yml
+    ## logs can be found in /var/logs/gitlab/reconfigure/
     - name: gitlab_firstconfigure_exec
       command: >
-        "gitlab-ctl reconfigure"
+        gitlab-ctl reconfigure
         creates=/var/opt/gitlab/bootstrapped
       failed_when: false
 
