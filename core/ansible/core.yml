@@ -26,17 +26,17 @@
 #      with_items:
 #        - epel-release
     ## and now the rest
-   - yum: pkg={{item}} state=present
-     with_items:
-       - git
-       - mc
-       - net-tools ## netstat etc
-       - tcpdump
-       - nmap
-       - httpd
-       - ganglia-gmond
-       - ganglia-gmetad
-       - ganglia-web
+    - yum: pkg={{item}} state=present
+      with_items:
+        - git
+        - mc
+        - net-tools ## netstat etc
+        - tcpdump
+        - nmap
+        - httpd
+        - ganglia-gmond
+        - ganglia-gmetad
+        - ganglia-web
     ## ansible has pretty odd error messages if get the indent wrong
     ##  [WARNING]: Ignoring invalid attribute: dest
     ## also if the with_items is indented in:

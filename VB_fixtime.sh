@@ -13,5 +13,7 @@ VBoxManage guestproperty set ${VMNAME} "/VirtualBox/GuestAdd/VBoxService/--times
 }
 
 for n in $( VBoxManage list vms | grep '^"' | cut -d\" -f2 ); do
+	echo "### VB fixtime for $n"
 	fix $n
+	VBoxManage guestproperty enumerate $n --patterns /VirtualBox/GuestAdd/*
 done

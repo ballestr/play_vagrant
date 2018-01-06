@@ -101,11 +101,11 @@ Vagrant.configure("2") do |config|
     # fix timesync of VirtualBox VMs
     # https://www.virtualbox.org/manual/ch09.html#changetimesync
     # https://superuser.com/questions/463106/virtualbox-how-to-sync-host-and-guest-time
-    vb.customize ["modifyvm", :id, "--timesync-interval",       "10000"]
-    vb.customize ["modifyvm", :id, "--timesync-min-adjust",     "100"]
-    vb.customize ["modifyvm", :id, "--timesync-set-on-restore", "1"]
-    vb.customize ["modifyvm", :id, "--timesync-set-start",      "1"]
-    vb.customize ["modifyvm", :id, "--timesync-set-threshold",  "10000" ] 
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-interval",       "10000"]
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-min-adjust",     "100"]
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-on-restore", "1"]
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-start",      "1"]
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold",  "10000" ] 
   end
   #
   # View the documentation for the provider you are using for more

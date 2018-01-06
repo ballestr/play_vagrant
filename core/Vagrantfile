@@ -77,6 +77,11 @@ Vagrant.configure("2") do |config|
     ## https://www.vagrantup.com/docs/virtualbox/configuration.html
     vb.linked_clone = true
     #vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-interval",       "10000"]
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-min-adjust",     "100"]
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-on-restore", "1"]
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-start",      "1"]
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold",  "10000" ] 
   end
   #
   # View the documentation for the provider you are using for more
