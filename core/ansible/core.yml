@@ -59,3 +59,5 @@
     - service: name=gmond   state=started enabled=true
     - service: name=gmetad  state=started enabled=true
 
+    ## VirtualBox VMs fall behind when using ntpd - disable
+    - service: name=ntpd state=stopped enabled=false
