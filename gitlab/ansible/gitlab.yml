@@ -1,0 +1,95 @@
+---
+- hosts: all
+  vars:
+    gitlab_repository_installation_script_url: "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh"
+    gitlab_repo_script: "/root/gitlab_install_repository.sh"
+    gitlab_ssl_certificate:     "/etc/gitlab/ssl/gitlab.crt"
+    gitlab_ssl_certificate_key: "/etc/gitlab/ssl/gitlab.key"
+    gitlab_create_self_signed_cert: "true"
+    gitlab_ssl_certificate_subj: "/C=ZZ/ST=None/L=NoWhere/O=IT/CN=gitlab"
+    # Probably best to leave this as the default, unless doing testing.
+    gitlab_restart_handler_failed_when: 'gitlab_restart.rc != 0'
+  tasks:
+
+############################################
+### some basic tools
+###
+    - yum: pkg={{item}} state=present
+      with_items:
+        - git
+        - mc
+        - net-tools ## netstat etc
+        - tcpdump
+        #- nmap
+        - iotop
+        - psmisc ## pstree etc
+
+############################################
+### GitLab setup 
+###
+    - yum: pkg={{item}} state=present
+      with_items:
+        - openssh-server
+        - postfix
+        - curl
+        - openssl
+        - tzdata
+
+    ## semaphore for fetch/exec GitLab repo script
+    ## hopefully they do not change the repo filename...
+    - name: gitlab_repo_file
+      stat: path=/etc/yum.repos.d/gitlab_gitlab-ce.repo
+      register: gitlab_repo_file
+#
+    - name: gitlab_repo_script_fetch
+      get_url:
+        url: "{{ gitlab_repository_installation_script_url }}"
+        dest: "{{ gitlab_repo_script }}"
+        #validate_certs: "{{ gitlab_download_validate_certs }}"
+      when: (gitlab_repo_file.stat.exists == false)
+
+    - name: gitlab_repo_script_exec
+      command: "/bin/bash {{gitlab_repo_script}}"
+      when: (gitlab_repo_file.stat.exists == false)
+
+    - package:
+        name: gitlab-ce
+        state: present
+    - copy:
+        dest: "/etc/gitlab/{{item}}"
+        src: "{{item}}"
+        owner: root
+        group: root
+        mode: 0600
+      notify: gitlab_restart
+      with_items:
+        - gitlab.rb
+
+    - name: gitlab_ssl_certificate_dir
+      file:
+        path: /etc/gitlab/ssl
+        state: directory
+        owner: root
+        group: root
+        mode: 0700
+      when: gitlab_create_self_signed_cert
+
+    - name: gitlab_ssl_certificate_selfsign
+      command: >
+        openssl req -new -nodes -x509 -subj "{{ gitlab_ssl_certificate_subj }}" -days 3650 -keyout {{ gitlab_ssl_certificate_key }} -out {{ gitlab_ssl_certificate }} -extensions v3_ca
+        creates={{ gitlab_ssl_certificate }}
+      notify: gitlab_restart
+      when: gitlab_create_self_signed_cert
+
+    - name: gitlab_firstconfigure_exec
+      command: >
+        "gitlab-ctl reconfigure"
+        creates=/var/opt/gitlab/bootstrapped
+      failed_when: false
+
+  handlers:
+  ## I love how Ansible will happily execute a play without checking if a handler exists or not... and then just fail if it doesn't
+    - name: gitlab_restart
+      command: gitlab-ctl reconfigure
+      register: gitlab_restart
+      failed_when: gitlab_restart_handler_failed_when
