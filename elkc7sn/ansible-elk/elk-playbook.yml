@@ -1,0 +1,38 @@
+---
+- hosts: all
+  tasks:
+    ## need separate task for installing repo files
+    - yum: pkg={{item}} state=present
+      with_items:
+        - epel-release
+    ## and now the rest
+    - yum: pkg={{item}} state=present
+      with_items:
+        - ganglia-gmond
+    - copy:
+        dest: "/etc/ganglia/{{item}}"
+        src: "{{item}}"
+      with_items:
+        - gmond.conf
+    - service: name=gmond   state=started enabled=true
+  roles:
+    - base
+    - elkrepo
+    #- elastic
+    #- logstash
+    #- kibana
+    - filebeat
+
+- hosts: elk1
+  roles:
+    #- elkrepo
+    - elastic
+    - logstash
+    #- kibana
+
+- hosts: elk2
+  roles:
+    #- elkrepo
+    - elastic
+    #- logstash
+    - kibana

@@ -1,0 +1,7 @@
+- copy:
+    dest: /etc/yum.repos.d/elk.repo
+    src:  elk.repo
+    owner: root
+    group: root
+    backup: yes
+  tags: yumrepo,elk

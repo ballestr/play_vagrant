@@ -1,0 +1,23 @@
+- name: ElasticSearch
+  tags: elk,elasticsearch
+  block:
+  - yum: pkg={{item}} state=present
+    with_items:
+    - java-1.8.0-openjdk
+    - elasticsearch
+  - copy:
+      dest: /etc/elasticsearch/elasticsearch.yml
+      src:  elasticsearch@{{ansible_hostname}}.yml
+      owner: root
+      group: elasticsearch
+      backup: yes
+      #notify: restart elasticsearch
+  ## do not set to autostart, for testing
+  - service: name=elasticsearch state=started
+
+## Perfect demonstration of why Ansible is just a glorified shellscript:
+## https://stackoverflow.com/questions/41556574/run-an-ansible-handler-only-once-for-the-entire-playbook
+## 
+#  handlers:
+#    - name: restart elasticsearch
+#      service: name=elasticsearch state=restarted

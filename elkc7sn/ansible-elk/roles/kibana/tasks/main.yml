@@ -1,0 +1,15 @@
+- name: Kibana
+  tags: elk,kibana
+  block:
+  - yum: pkg={{item}} state=present
+    with_items:
+    #- java-1.8.0-openjdk
+    - kibana
+#  - copy:
+#      dest: /etc/kibana/kibana.yml
+#      src:  kibana.yml
+#      owner: root
+#      group: root
+#      backup: yes
+  ## do not set to autostart, for flexible testing
+  - service: name=kibana state=started
