@@ -58,7 +58,9 @@ node.data: true
 #
 ## address on privnet for talking to cluster in Vagrant, 
 ## localhost to talk with Kibana and Logstash
-#network.host: ["127.0.0.1"]
+# NOTE: we are exposing ES to other VMs and to the host, so that it's easier to debug.
+# Do not use this configuration on production
+network.host: ["10.0.3.20", "10.0.2.15", "localhost"]
 #
 # Set a custom port for HTTP:
 #
