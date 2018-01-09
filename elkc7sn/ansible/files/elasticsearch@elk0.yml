@@ -14,13 +14,13 @@
 #
 # Use a descriptive name for your cluster:
 #
-cluster.name: elasticsearch
+cluster.name: elk.vagrant.single
 #
 # ------------------------------------ Node ------------------------------------
 #
 # Use a descriptive name for the node:
 #
-node.name: elk2
+node.name: elk0
 #
 # Add custom attributes to the node:
 #
@@ -56,7 +56,9 @@ node.data: true
 #
 # Set the bind address to a specific IP (IPv4 or IPv6):
 #
-network.host: ["10.0.3.22","127.0.0.1"]
+## address on privnet for talking to cluster in Vagrant, 
+## localhost to talk with Kibana and Logstash
+#network.host: ["127.0.0.1"]
 #
 # Set a custom port for HTTP:
 #
@@ -71,12 +73,12 @@ network.host: ["10.0.3.22","127.0.0.1"]
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
 #discovery.zen.ping.multicast.enabled: true
-discovery.zen.ping.unicast.hosts: ["10.0.3.21", "10.0.3.22"]
+#discovery.zen.ping.unicast.hosts: ["10.0.3.21", "10.0.3.22"]
 #
 # Prevent the "split brain" by configuring the majority of nodes (total number of nodes / 2 + 1):
 #
 ## two nodes should not work...
-discovery.zen.minimum_master_nodes: 2
+#discovery.zen.minimum_master_nodes: 2
 
 #
 # For more information, see the documentation at:

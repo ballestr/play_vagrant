@@ -1,3 +1,12 @@
+- name: Base_EPEL
+  tags: base,repo,epel
+  block:
+    ## need separate task for installing repo files
+    - yum: pkg={{item}} state=present
+      with_items:
+        - epel-release
+
+
 - name: Base_NTP
   tags: base,ntp
   block:

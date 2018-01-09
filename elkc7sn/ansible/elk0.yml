@@ -18,21 +18,7 @@
   roles:
     - base
     - elkrepo
-    #- elastic
-    #- logstash
-    #- kibana
-    - filebeat
-
-- hosts: elk1
-  roles:
-    #- elkrepo
     - elastic
     - logstash
-    #- kibana
-
-- hosts: elk2
-  roles:
-    #- elkrepo
-    - elastic
-    #- logstash
     - kibana
+    - filebeat

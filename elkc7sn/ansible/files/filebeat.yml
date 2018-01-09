@@ -280,7 +280,7 @@ output:
   ### Logstash as output
   logstash:
     # The Logstash hosts
-    hosts: ["10.0.3.21:5044"]
+    hosts: ["127.0.0.1:5044"]
 
     # Number of workers per Logstash host.
     #worker: 1
