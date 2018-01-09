@@ -51,5 +51,15 @@ echo "http://$IP:5601/"
 ## Load testing 
 while true; do logger -t elktest "testing_${RANDOM}"; sleep 1; sleep $[RANDOM%5]; done
 
-
+## JSon queries...
+curl -XGET 'localhost:9200/filebeat-*/_search?pretty' -H 'Content-Type: application/json' -d'
+{
+    "query" : {
+        "bool" : {        }
+    },
+    "sort": [
+        { "timestamp":   { "order": "asc" }}
+    ]
+}
+'
 
