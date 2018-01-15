@@ -10,6 +10,15 @@
       src:  elasticsearch@{{ansible_hostname}}.yml
       owner: root
       group: elasticsearch
+      mode: 0660
+      backup: yes
+      #notify: restart elasticsearch
+  - copy:
+      dest: /etc/elasticsearch/jvm.options
+      src:  elasticsearch-jvm.options
+      owner: root
+      group: elasticsearch
+      mode: 0660
       backup: yes
       #notify: restart elasticsearch
   ## do not set to autostart, for testing

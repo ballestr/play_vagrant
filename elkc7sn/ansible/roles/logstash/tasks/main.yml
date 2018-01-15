@@ -19,3 +19,6 @@
       backup: yes
   ## do not set to autostart, for flexible testing
   - service: name=logstash state=started
+
+## enforce permissions
+## chown -R logstash.logstash /var/lib/logstash/
