@@ -37,4 +37,5 @@
     - tcpdump
     - htop
     - iotop
+    - psmisc
 
