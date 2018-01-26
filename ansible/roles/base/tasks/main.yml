@@ -1,0 +1,13 @@
+- include_tasks: "{{include_item}}"
+  ## Ansible crap: if I don't tag it again here, it ignores that it's tagged base in the included file
+  tags: base
+  with_items:
+  - yumrepo_epel.yml
+  - gmond.yml
+  - tools.yml
+  - clock_vagrant.yml
+  loop_control:
+    loop_var: include_item
+    ## Ansible crap: amazing how crap this "language" is... variable scoping, anybody? sash, Jan 2018
+
+

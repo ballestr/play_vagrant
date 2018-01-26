@@ -1,0 +1,11 @@
+- name: Base_clock_vagrant
+  tags: base,ntp,clock,vagrant
+  block:
+  - yum: pkg={{item}} state=present
+    with_items:
+    - ntp
+  ## VirtualBox VMs fall behind when using ntpd - disable
+  - service: name=ntpd state=stopped enabled=false
+  ## and use instead the Guest Addition
+  - service: name=vboxadd-service state=started enabled=true
+  ## this part should go in block/when depending on VM type / HW

@@ -1,0 +1,10 @@
+---
+- hosts: all
+  tasks:
+  roles:
+    - base
+    - elkrepo
+    - elastic
+    - logstash
+    - kibana
+    - filebeat

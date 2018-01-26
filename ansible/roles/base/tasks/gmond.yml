@@ -1,6 +1,6 @@
----
-- hosts: all
-  tasks:
+- name: Base_gmond
+  tags: base, gmond
+  block:
     ## need separate task for installing repo files
     - yum: pkg={{item}} state=present
       with_items:
@@ -15,10 +15,3 @@
       with_items:
         - gmond.conf
     - service: name=gmond   state=started enabled=true
-  roles:
-    - base
-    - elkrepo
-    - elastic
-    - logstash
-    - kibana
-    - filebeat

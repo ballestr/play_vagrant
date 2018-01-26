@@ -1,0 +1,17 @@
+## Complete toolset
+## you may not want this on a production host
+## (do not make intruder's life easier)
+- name: Base_tools
+  tags: base
+  block:
+  - yum: pkg={{item}} state=present
+    with_items:
+    - mc
+    - nmap
+    - net-tools
+    - nc
+    - telnet
+    - tcpdump
+    - htop
+    - iotop
+    - psmisc
