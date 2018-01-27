@@ -1,0 +1,38 @@
+## setup for testing logstash
+## sorry, content is private
+---
+- hosts: all
+  vars:
+    path_conf: "~/prod/logstash-tests"
+    path_samples: "~/privnobak/logstash_testfiles"
+  tasks:
+    - file:
+        dest: "/testlogs"
+        state: directory
+        owner: vagrant # let the test user see it
+        group: vagrant
+        mode: 0770
+    - name: copy script
+      copy:
+        dest: "/testlogs/{{item}}"
+        src: "{{path_conf}}/{{item}}"
+        owner: vagrant
+        group: vagrant
+        mode: 0755
+      with_items:
+        - logstash-test.sh
+    - name: copy configuration
+      copy:
+        dest: "/testlogs/{{item}}"
+        src: "{{path_conf}}/{{item}}"
+      with_items:
+        - filebeat/
+        - logstash/
+    - name: copy sample logfiles
+      copy:
+        dest: "/testlogs/samples/"
+        src: "{{path_samples}}/"
+    - service: name=elasticsearch state=started
+    - service: name=kibana        state=started
+    #- service: name=logstash      state=restarted
+    #- service: name=filebeat      state=stopped

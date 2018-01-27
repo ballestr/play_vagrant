@@ -8,10 +8,11 @@
     with_items:
     - mc
     - nmap
-    - net-tools
-    - nc
-    - telnet
     - tcpdump
+    - net-tools ## ifconfig, netstat etc
+    - nc ## netcat
+    - telnet
     - htop
     - iotop
-    - psmisc
+    - psmisc ## pstree etc
+    - jq  ## json processor

@@ -5,11 +5,26 @@
     with_items:
     #- java-1.8.0-openjdk
     - kibana
-#  - copy:
-#      dest: /etc/kibana/kibana.yml
-#      src:  kibana.yml
-#      owner: root
-#      group: root
-#      backup: yes
+  - copy:
+      dest: /etc/kibana/kibana.yml
+      src:  kibana.yml
+      owner: root
+      group: root
+      mode: 0644
+      backup: yes
+    notify: restart kibana
+  ## /var/log/kibana disappeared with v5
+  - name: directory /var/log/kibana
+    file: 
+      dest: /var/log/kibana
+      state: directory
+      owner: kibana
+      group: kibana
+      mode: 0770
   ## do not set to autostart, for flexible testing
-  - service: name=kibana state=started
+  - name: service_start
+    service: name=kibana state=started
+    when: '"kibana" in service'
+#  - name: service_stop
+#    service: name=kibana state=stopped
+#    when: '"kibana" not in service'

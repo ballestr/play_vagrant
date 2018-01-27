@@ -1,0 +1,10 @@
+## Perfect demonstration of why Ansible is just a glorified shellscript:
+## https://stackoverflow.com/questions/41556574/run-an-ansible-handler-only-once-for-the-entire-playbook
+## 
+#handlers:
+  - name: restart kibana
+    service: name=kibana state=restarted
+    when: '"kibana" in service'
+# do we have reload ?
+#  - name: reload kibana
+#    service: name=kibana state=reload
