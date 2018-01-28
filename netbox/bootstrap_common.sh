@@ -1,16 +1,30 @@
 #!/usr/bin/env bash
+## original from https://github.com/ryanmerolle/netbox-vagrant
+## Port to Centos7, sergio.ballestrero@protonmail.com, January 2018
 
-# Prevent
-#export DEBIAN_FRONTEND=noninteractive
+NETBOX_BRANCH=master
 
-systemctl daemon-reload
-
+if [ -e /etc/redhat-release ] ; then
+	## Assume Centos7
+	OS=Centos7
+	CFG="/tmp/netbox-vagrant/config_files_$OS"
+	## for Centos7, the package install part is done in a separate script
+	## run from Vagrant
+	#bash /vagrant/bootstrap_Centos7.sh
+else
+	OS=Ubuntu
+	CFG="/tmp/netbox-vagrant/config_files"
+	# Prevent
+	export DEBIAN_FRONTEND=noninteractive
+fi
 
 # Install Git
 printf "Step 1 of 20: Installing git & cloning netbox-vagrant...\n"
 #apt-get install git -y -qq > /dev/null
 cd /tmp/ || exit 
 [ -d netbox-vagrant/.git ] || git clone -b master https://github.com/ryanmerolle/netbox-vagrant.git
+## use /vagrant on top of checking out from git, faster dev cycle
+rsync -av /vagrant/ netbox-vagrant/
 
 # Update Ubuntu
 #printf "Step 2 of 20: Updating Ubuntu...\n"
@@ -19,7 +33,7 @@ cd /tmp/ || exit
 # Install Postgres & start service
 printf "Step 3 of 20: Installing & starting Postgres...\n"
 #apt-get install postgresql libpq-dev -y -qq > /dev/null
-sudo service postgresql start
+#sudo service postgresql start
 
 # Setup Postgres with netbox user, database, and permissions
 printf "Step 4 of 20: Setup Postgres with netbox user, database, & permissions."
@@ -51,7 +65,7 @@ mkdir -p /opt/netbox/ && cd /opt/netbox/
 [ -d .git ] || git clone -b master https://github.com/digitalocean/netbox.git .
 
 ## exit on error
-set -e
+#set -e
 
 # Install NetBox requirements
 printf "Step 10 of 20: Installing NetBox requirements...\n"
@@ -70,28 +84,25 @@ sed -i "s~SECRET_KEY = ''~SECRET_KEY = '$SECRET_KEY'~g" /opt/netbox/netbox/netbo
 # Clear SECRET_KEY variable
 unset SECRET_KEY
 
-## for C7, be more like ubuntu
-mkdir -p /etc/nginx/sites-available
-mkdir -p /etc/nginx/sites-enabled
-mkdir -p /etc/supervisor
-ln -sf /etc/supervisord.d /etc/supervisor/conf.d
-
 # Setup apache, gunicorn, & supervisord config using premade examples (need to change netbox-setup)
-printf "Step 12 of 20: Configuring nginx...\n"
-cp /tmp/netbox-vagrant/config_files/nginx-netbox.example /etc/nginx/sites-available/netbox
+SRCDIR="/tmp/netbox-vagrant/config_files_$OS"
+printf "Step 12 of 20: Configuring nginx... \n"
+#cp $SRCDIR/nginx-netbox.example /etc/nginx/sites-available/netbox
+cp $SRCDIR/nginx-netbox.example /etc/nginx/sites-available/netbox.conf ## Centos7
 printf "Step 13 of 20: Configuring gunicorn...\n"
-cp /tmp/netbox-vagrant/config_files/gunicorn_config.example.py /opt/netbox/gunicorn_config.py
+cp $SRCDIR/gunicorn_config.example.py /opt/netbox/gunicorn_config.py
 printf "Step 14 of 20: Configuring supervisor...\n"
-cp /tmp/netbox-vagrant/config_files/supervisord-netbox.example.conf /etc/supervisor/conf.d/netbox.conf
+#cp $SRCDIR/supervisord-netbox.example.conf /etc/supervisor/conf.d/netbox.conf
+cp $SRCDIR/supervisord-netbox.example.conf /etc/supervisord.d/netbox.ini ## Centos7
 
 # Apache Setup (enable the proxy and proxy_http modules, and reload Apache)
 printf "Step 15 of 20: Completing web service setup...\n"
 cd /etc/nginx/sites-enabled/
 [ -e default ] && rm -f default
-ln -s /etc/nginx/sites-available/netbox
+[ -e netbox ] || ln -s /etc/nginx/sites-available/netbox.conf  ## Centos7
 service nginx restart
 #service supervisor restart
-service supervisord restart
+service supervisord restart ## Centos7
 
 # Install the database schema
 printf "Step 16 of 20: Install the database schema...\n"
@@ -105,6 +116,11 @@ echo "from django.contrib.auth.models import User; User.objects.create_superuser
 printf "Step 18 of 20: collectstatic\n"
 python3 /opt/netbox/netbox/manage.py collectstatic --no-input <<<yes
 
+#
+printf "Step 18B of 20: Permissions on MEDIA_DIR...\n"
+chgrp -R nginx /opt/netbox/netbox/media/ ## Centos7
+chmod -R g+rwx /opt/netbox/netbox/media/
+
 # Load Initial Data (Optional) Comment out if you like
 printf "Step 19 of 20: Load intial data.\n"
 python3 /opt/netbox/netbox/manage.py loaddata initial_data
@@ -113,6 +129,7 @@ python3 /opt/netbox/netbox/manage.py loaddata initial_data
 printf "Step 20 of 20: Cleaning up netbox-vagrant setup files...\n"
 rm -rf /tmp/netbox-vagrant/
 printf "netbox-vagrant setup files deleted...\n"
+
 
 # Status Complete
 printf "%s\nCOMPLETE: NetBox-Demo Provisioning COMPLETE!!\n"
