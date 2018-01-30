@@ -6,9 +6,8 @@
   block:
   - yum: pkg={{item}} state=present
     with_items:
-    - mc
-    - nmap
-    - tcpdump
+    - libsemanage-python ## for ansible to set SELinux
+    - mc ## Sergio's favourite shell
     - net-tools ## ifconfig, netstat etc
     - nc ## netcat
     - telnet
@@ -16,3 +15,7 @@
     - iotop
     - psmisc ## pstree etc
     - jq  ## json processor
+    - strace
+    ## network debug tools
+    - nmap
+    - tcpdump
