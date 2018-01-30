@@ -1,0 +1,12 @@
+#!/bin/bash
+## build sequence for a new host
+## do the system updates before provisioning and VB Guest stuff
+
+# vagrant box update
+# vagrant destroy
+vagrant up --no-provision
+vagrant ssh -c "sudo yum update -y"
+vagrant halt
+vagrant up --no-provision
+vagrant vbguest -b
+vagrant provision
