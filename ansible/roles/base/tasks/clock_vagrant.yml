@@ -8,4 +8,5 @@
   - service: name=ntpd state=stopped enabled=false
   ## and use instead the Guest Addition
   - service: name=vboxadd-service state=started enabled=true
+    when: vboxguest is defined 
   ## this part should go in block/when depending on VM type / HW
