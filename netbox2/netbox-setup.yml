@@ -1,0 +1,60 @@
+  - yum: pkg={{item}} state=present
+    with_items:
+    - git
+    - supervisor
+    - python34
+    - python34-pip
+    - python34-devel
+    - libxml2-devel
+    - libxslt-devel
+    - openssl-devel
+    - libffi-devel
+    - graphviz
+
+  - pip:
+      name: gunicorn
+      executable: pip3
+
+  ## Setup NetBox, finally
+
+  - git:
+      repo: 'https://github.com/digitalocean/netbox.git'
+      dest: /opt/netbox/
+      version: master
+
+  - copy:
+      dest: "/etc/nginx/sites-available/netbox.conf"
+      src: "nginx-netbox.conf"
+  - file:
+      dest: "/etc/nginx/sites-enabled/netbox.conf"
+      src: "/etc/nginx/sites-available/netbox.conf"
+      state: link
+  - copy:
+      dest: "/opt/netbox/gunicorn_config.py"
+      src: "gunicorn_config.py"
+  - copy:
+      dest: "/opt/netbox/netbox/netbox/configuration.py"
+      src: "configuration.py"
+  - copy:
+      dest: "/etc/supervisord.d/netbox.ini"
+      src: "supervisord-netbox.ini"
+
+  - service: name=nginx       state=restarted enabled=true
+  - service: name=supervisord state=restarted enabled=true
+
+  - file:
+      dest: /opt/netbox/netbox/media/image-attachments/
+      group: nginx
+      mode: 0775
+
+  - pip:
+      requirements: /opt/netbox/requirements.txt
+      executable: pip3
+
+  - copy:
+      dest: /opt/netbox-setup.sh
+      src: netbox-setup.sh
+      mode: 0775
+  - command: "/opt/netbox-setup.sh"
+    args:
+      creates: "/opt/netbox-setup.done"

@@ -1,0 +1,15 @@
+---
+- hosts: all
+  vars:
+  roles:
+    - base
+  tasks:
+  - yum: pkg={{item}} state=present
+    with_items:
+    - libsemanage-python ## for ansible to set SELinux
+    - git
+
+  - import_tasks: netbox-postgresql94.yml
+  - import_tasks: netbox-nginx.yml
+  - import_tasks: netbox-setup.yml
+

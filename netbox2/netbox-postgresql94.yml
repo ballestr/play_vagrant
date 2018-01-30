@@ -1,0 +1,22 @@
+  ## Setup PostgreSQL 9.4
+
+  - yum: pkg="https://download.postgresql.org/pub/repos/yum/9.4/redhat/rhel-7-x86_64/pgdg-redhat94-9.4-2.noarch.rpm" state=present
+  - yum: pkg={{item}} state=present
+    with_items:
+    - postgresql94
+    - postgresql94-server
+    - postgresql94-devel
+
+  
+  - name: postgreSQL initdb
+    command: "/usr/pgsql-9.4/bin/postgresql94-setup initdb"
+    args:
+      creates: /var/lib/pgsql/9.4/data/PG_VERSION
+
+  ## fix access control 
+  - copy:
+      dest: "/var/lib/pgsql/9.4/data/pg_hba.conf"
+      src: "pg_hba.conf"
+      backup: true
+
+  - service: name="postgresql-9.4" state=started enabled=true
