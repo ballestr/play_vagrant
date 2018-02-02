@@ -37,13 +37,13 @@ Vagrant.configure("2") do |config|
     #vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold",  "10000" ] 
   end
 
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "ansible-netbox.yml"
-    ansible.become = true
-    ansible.become_user = "root"
-    ansible.compatibility_mode = "2.0"
-  end
-  #config.vm.provision :shell, path: "bootstrap_Centos7.sh"
-  #config.vm.provision :shell, path: "bootstrap_common.sh"
+  #config.vm.provision "ansible" do |ansible|
+  #  ansible.playbook = "ansible-elk0.yml"
+  #  ansible.become = true
+  #  ansible.become_user = "root"
+  #  ansible.compatibility_mode = "2.0"
+  #end
+  config.vm.provision :shell, path: "bootstrap_Centos7.sh"
+  config.vm.provision :shell, path: "bootstrap_common.sh"
   config.vm.provision :shell, path: "check_http.sh"
 end
