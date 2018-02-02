@@ -19,6 +19,37 @@
     - "elasticsearch<6.0.0" ## while running ELKv5
     - "elastalert"
 
+  - name: elastalert systemd 
+    copy:
+      dest: /etc/systemd/system/elastalert.service
+      src: elastalert.service
+  ## try to use rsync --delete to cleanup unwanted local files - sergio, Feb 2018
+  - name: elastalert configuration
+    synchronize:
+      dest: /etc/elastalert/
+      src: elastalert/
+      mode: push # just to be clear
+      delete: yes
+      archive: yes 
+      owner: no # ansible crap - avoid wrong user/group
+      group: no # ansible crap - avoid wrong user/group
+      rsync_opts:
+        - "--exclude=.DS_Store" # mac crap
+    ##notify etc
+  ## make sure rsync or root didn't mess up ownership
+  - name: elastalert configuration owner
+    file:
+      dest: /etc/elastalert/
+      state: directory
+      owner: root
+      group: root
+      mode: a=rX,u+w  # 644 doesn't work for directories
+      recurse: yes
+    ##notify etc
+
+  ## use this instead of service, make sure config is reloaded
+  - systemd: name=elastalert state=started enabled=true daemon-reload=true
+
   ## dev installation for testing
   - yum: pkg=git state=present
   #- git:

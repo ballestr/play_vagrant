@@ -1,0 +1,29 @@
+## ElastAlert systemd service
+
+[Unit]
+Description=ElastAlert
+After=multi-user.target
+After=elasticsearch.service
+
+[Service]
+Type=simple
+User=nobody
+Group=nobody
+WorkingDirectory=/var/tmp
+PIDFile=/var/run/elastalert.pid
+StandardOutput=syslog
+StandardError=syslog
+KillSignal=SIGKILL
+## verbose for test mode
+# ExecStart=/usr/bin/elastalert --verbose --config /etc/elastalert/config.yaml
+ExecStart=/usr/bin/elastalert --config /etc/elastalert/config.yaml
+
+## restart rate limiting
+## https://serverfault.com/questions/736624/systemd-service-automatic-restart-after-startlimitinterval
+Restart=on-failure
+#Restart=always
+StartLimitInterval=60
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target

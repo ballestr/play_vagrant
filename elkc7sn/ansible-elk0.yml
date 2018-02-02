@@ -11,3 +11,4 @@
     - filebeat
   tasks:
     - import_tasks: tasks/elastalert.yml
+      tags: elastalert
