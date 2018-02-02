@@ -2,7 +2,6 @@
 - hosts: all
   vars:
     service: [] #[elasticsearch,logstash,kibana]
-  tasks:
   roles:
     - base
     - elkrepo
@@ -10,3 +9,5 @@
     - logstash
     - kibana
     - filebeat
+  tasks:
+    - import_tasks: tasks/elastalert.yml

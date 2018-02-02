@@ -12,6 +12,12 @@
       group: root
       backup: yes
   - copy:
+      dest: /etc/logstash/logstash.yml
+      src:  logstash@{{ansible_hostname}}.yml
+      owner: root
+      group: root
+      backup: yes
+  - copy:
       dest: /etc/logstash/elasticsearch-template.conf
       src:  elasticsearch-template.conf
       owner: root

@@ -1,0 +1,26 @@
+  ## ugly, dev tools on producion server
+  ## we should probably use bundles instead
+  ## https://pip.pypa.io/en/stable/user_guide/#installation-bundles
+
+  - yum: pkg={{item}} state=present
+    with_items:
+    #- java-1.8.0-openjdk
+    - python2-pip
+    - gcc ## 
+    - python-devel
+  - name: pip dontcomplain
+    copy:
+      dest: /etc/pip.conf
+      content: "## AnsibleManaged\n[global]\ndisable_pip_version_check = 1\n"
+  - pip: 
+      name: "{{item}}"
+    with_items:
+    - "setuptools>=11.3"
+    - "elasticsearch<6.0.0" ## while running ELKv5
+    - "elastalert"
+
+  ## dev installation for testing
+  - yum: pkg=git state=present
+  #- git:
+  #    dest: /root/elastalert
+  #    src: https://github.com/Yelp/elastalert.git
