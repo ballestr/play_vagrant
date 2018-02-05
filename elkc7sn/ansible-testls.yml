@@ -1,5 +1,5 @@
 ## setup for testing logstash
-## sorry, content is private
+## sorry, content (logs&filters) is private, off-repo
 ---
 - hosts: all
   vars:
