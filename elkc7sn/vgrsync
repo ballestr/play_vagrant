@@ -1,0 +1,1 @@
+rsync -e "ssh -F ./ssh.config" -avP elk0:/testlogs/ ./testlogs/ --exclude logs/ --exclude samples/
