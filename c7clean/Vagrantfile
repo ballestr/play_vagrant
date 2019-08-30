@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
     m.vm.hostname="clean0"
     #ip="10.0.3.30"
     #m.vm.network "private_network", ip: "#{ip}", virtualbox__intnet: "NatNetwork3"
-    m.vm.network "forwarded_port", guest: 8080, host: 8080
+    #m.vm.network "forwarded_port", guest: 8080, host: 8080
     ## Host-specific resource settings
     m.vm.provider :virtualbox do |vb|
         vb.customize ["modifyvm", :id, "--memory", "2048"]
@@ -20,6 +20,7 @@ Vagrant.configure("2") do |config|
     end
   end
 
+  config.vm.synced_folder 'synced', '/mnt/synced', SharedFoldersEnableSymlinksCreate: false
 
   config.vm.provider "virtualbox" do |vb|
     ## https://www.vagrantup.com/docs/virtualbox/configuration.html
@@ -40,7 +41,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: "./puppet_setup.sh"
 
   ## faster to groupinstall, easier from shell than puppet
-  config.vm.provision "shell", inline: "rpm -q libstdc++-devel || yum groupinstall -y development"
+  ## yum grouplist -v installed
+  #config.vm.provision "shell", inline: "rpm -q libstdc++-devel || yum groupinstall -y development"
 
   config.vm.provision "puppet" do |puppet|
     puppet.manifests_path = "pup/manifests"
