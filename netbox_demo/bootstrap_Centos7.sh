@@ -20,7 +20,7 @@ echo "## Prep 02/$NS: Install and start PostgreSQL 9.4"
 # yum install postgresql postgresql-server
 # postgresql-setup initdb
 ## from https://www.postgresql.org/download/linux/redhat/
-yum install -q -y https://download.postgresql.org/pub/repos/yum/9.4/redhat/rhel-7-x86_64/pgdg-redhat94-9.4-2.noarch.rpm
+yum install -q -y https://download.postgresql.org/pub/repos/yum/9.4/redhat/rhel-7-x86_64/pgdg-redhat94-9.4-3.noarch.rpm
 yum install -q -y postgresql94 postgresql94-server postgresql94-devel
 ## init database
 /usr/pgsql-9.4/bin/postgresql94-setup initdb
@@ -37,8 +37,8 @@ echo "## Prep 03/$NS: Install daemons"
 yum install -q -y git nginx supervisor
 
 ## Python3, PIP and build dependencies
-echo "## Prep 04/$NS: Install python34 + PIP with build dependencies"
-yum install -q -y python34 python34-pip python34-devel libxml2-devel libxslt-devel openssl-devel  libffi-devel graphviz 
+echo "## Prep 04/$NS: Install python36 + PIP with build dependencies"
+yum install -q -y python36 python36-pip python36-devel libxml2-devel libxslt-devel openssl-devel  libffi-devel graphviz
 
 echo "## Prep 05/$NS: Pre-configuration"
 ## for nginx on Centos7, to be more like ubuntu
