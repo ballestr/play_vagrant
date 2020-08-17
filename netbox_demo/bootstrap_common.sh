@@ -2,6 +2,7 @@
 ## original from https://github.com/ryanmerolle/netbox-vagrant
 ## Port to Centos7, sergio.ballestrero@protonmail.com, January 2018
 
+PATH=$PATH:/usr/local/bin/
 NETBOX_BRANCH=master
 
 if [ -e /etc/redhat-release ] ; then
