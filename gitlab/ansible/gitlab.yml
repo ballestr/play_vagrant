@@ -9,6 +9,8 @@
     gitlab_ssl_certificate_subj: "/C=ZZ/ST=None/L=NoWhere/O=IT/CN=gitlab"
     # Probably best to leave this as the default, unless doing testing.
     gitlab_restart_handler_failed_when: 'gitlab_restart.rc != 0'
+    ## specific version; important for backup recovery
+    gitlab_version: -10.4.0-ce.0.el7
   tasks:
 
 ############################################
@@ -55,7 +57,7 @@
       when: (gitlab_repo_file.stat.exists == false)
 
     - package:
-        name: gitlab-ce
+        name: gitlab-ce{{gitlab_version}}
         state: present
     - copy:
         dest: "/etc/gitlab/{{item}}"

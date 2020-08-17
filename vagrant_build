@@ -9,4 +9,5 @@ vagrant ssh -c "sudo yum update -y"
 vagrant halt
 vagrant up --no-provision
 vagrant vbguest -b
+vagrant reload --no-provision
 vagrant provision
