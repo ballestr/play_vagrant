@@ -1,0 +1,53 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+
+  ## VBguest plugin - do not install automatically
+  config.vbguest.auto_update = false
+
+  config.vm.define "c7build1" do |m|
+    m.vm.hostname="c7build1"
+    #ip="10.0.3.30"
+    #m.vm.network "private_network", ip: "#{ip}", virtualbox__intnet: "NatNetwork3"
+    #m.vm.network "forwarded_port", guest: 8080, host: 8080
+    ## Host-specific resource settings
+    m.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", "2048"]
+        vb.customize ["modifyvm", :id, "--cpus", "2"]
+    end
+  end
+
+  ## disable rsync of ./ ; setup a separate synced folder
+  config.vm.synced_folder ".", "/home/vagrant/sync", disabled: true
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder '~/vgbuild', '/mnt/vgbuild', SharedFoldersEnableSymlinksCreate: false
+
+  config.vm.provider "virtualbox" do |vb|
+    ## https://www.vagrantup.com/docs/virtualbox/configuration.html
+    vb.linked_clone = true
+    #vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+    # fix timesync of VirtualBox VMs
+    # https://www.virtualbox.org/manual/ch09.html#changetimesync
+    # https://superuser.com/questions/463106/virtualbox-how-to-sync-host-and-guest-time
+    #vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-interval",       "10000"]
+    #vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-min-adjust",     "100"]
+    #vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-on-restore", "1"]
+    #vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-start",      "1"]
+    #vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold",  "10000" ] 
+  end
+
+  #config.vm.provision "file", source: "puppet3.repo", destination: "puppet3.repo"
+  config.vm.provision "file", source: "puppet_setup.sh", destination: "puppet_setup.sh"
+  config.vm.provision "shell", path: "./puppet_setup.sh"
+
+  ## faster to groupinstall, easier from shell than puppet
+  ## yum grouplist -v installed
+  config.vm.provision "shell", inline: "rpm -q libstdc++-devel || yum groupinstall -y development"
+
+  config.vm.provision "puppet" do |puppet|
+    puppet.manifests_path = "pup/manifests"
+    puppet.manifest_file = "default.pp"
+  end
+end
