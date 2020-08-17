@@ -15,9 +15,21 @@
   - pip: 
       name: "{{item}}"
     with_items:
-    - "setuptools>=11.3"
-    - "elasticsearch<6.0.0" ## while running ELKv5
+    - "setuptools>=11.3" ## system installed is 0.9.8
+    - "elasticsearch"#<6.0.0" ## while running ELKv5
     - "elastalert"
+
+  - group:
+      name: elastalert
+      system: true
+
+  - user:
+      name: elastalert
+      comment: "ElastAlert service user"
+      system: true
+      shell: /bin/bash
+      group: elastalert
+      createhome: yes
 
   - name: elastalert systemd 
     copy:

@@ -7,7 +7,7 @@ After=elasticsearch.service
 
 [Service]
 Type=simple
-User=nobody
+User=elastalert
 Group=nobody
 WorkingDirectory=/var/tmp
 PIDFile=/var/run/elastalert.pid
