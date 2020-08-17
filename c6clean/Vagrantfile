@@ -1,0 +1,44 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/6"
+
+  ## VBguest plugin - do not install automatically
+  config.vbguest.auto_update = false
+
+  config.vm.define "clean0" do |m|
+    m.vm.hostname="clean0"
+    #ip="10.0.3.30"
+    #m.vm.network "private_network", ip: "#{ip}", virtualbox__intnet: "NatNetwork3"
+    #m.vm.network "forwarded_port", guest: 8080, host: 8080
+    ## Host-specific resource settings
+    m.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", "1024"]
+        vb.customize ["modifyvm", :id, "--cpus", "2"]
+    end
+  end
+
+
+  config.vm.provider "virtualbox" do |vb|
+    ## https://www.vagrantup.com/docs/virtualbox/configuration.html
+    vb.linked_clone = true
+    #vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+    # fix timesync of VirtualBox VMs
+    # https://www.virtualbox.org/manual/ch09.html#changetimesync
+    # https://superuser.com/questions/463106/virtualbox-how-to-sync-host-and-guest-time
+    #vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-interval",       "10000"]
+    #vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-min-adjust",     "100"]
+    #vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-on-restore", "1"]
+    #vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-start",      "1"]
+    #vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold",  "10000" ] 
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "ansible-clean.yml"
+    ansible.become = true
+    ansible.become_user = "root"
+    ansible.compatibility_mode = "2.0"
+  end
+end
